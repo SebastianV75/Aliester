@@ -15,13 +15,15 @@ function getCuentaById(id) {
 
 function getCuentaBadge(cuenta) {
   if (!cuenta) return '<span style="color:var(--text-tertiary)">-</span>';
-  return `<span class="badge badge-neutral" style="background:${cuenta.color}15;color:${cuenta.color}">${cuenta.banco} **** ${cuenta.terminacion}</span>`;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const alpha = isDark ? '30' : '15';
+  return `<span class="badge badge-neutral" style="background:${cuenta.color}${alpha};color:${cuenta.color}">${cuenta.banco} **** ${cuenta.terminacion}</span>`;
 }
 
 function getRedIcon(red) {
   const icons = {
     visa: '<svg width="32" height="20" viewBox="0 0 32 20"><rect width="32" height="20" rx="3" fill="#1A1F71"/><text x="16" y="13" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="sans-serif">VISA</text></svg>',
-    mastercard: '<svg width="32" height="20" viewBox="0 0 32 20"><rect width="32" height="20" rx="3" fill="#252525"/><circle cx="12" cy="10" r="6" fill="#EB001B"/><circle cx="20" cy="10" r="6" fill="#F79E1B"/></svg>',
+    mastercard: '<svg width="32" height="20" viewBox="0 0 32 20"><rect width="32" height="20" rx="3" fill="#3a3a3a"/><circle cx="12" cy="10" r="6" fill="#EB001B"/><circle cx="20" cy="10" r="6" fill="#F79E1B"/></svg>',
     amex: '<svg width="32" height="20" viewBox="0 0 32 20"><rect width="32" height="20" rx="3" fill="#006FCF"/><text x="16" y="13" text-anchor="middle" fill="white" font-size="6" font-weight="bold" font-family="sans-serif">AMEX</text></svg>'
   };
   return icons[red] || '';

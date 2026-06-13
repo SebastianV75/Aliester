@@ -92,6 +92,13 @@
 
 /* Dark Mode */
 [data-theme="dark"] {
+  /* OC Palette - inverted for dark mode */
+  --oc-black:      #e0e0e0;
+  --oc-dark:       #a0a0a0;
+  --oc-mid:        #cccccc;
+  --oc-light:      #444444;
+  --oc-lighter:    #555555;
+
   --bg-primary:      #1a1a1a;
   --bg-secondary:    #2d2d2d;
   --bg-tertiary:     #3a3a3a;

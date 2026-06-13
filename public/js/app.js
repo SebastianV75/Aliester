@@ -5,6 +5,13 @@ let notificationsEnabled = true;
 let currentCurrency = 'MXN';
 let currentFontSize = 'normal';
 
+// Exchange rates (base: MXN)
+const exchangeRates = {
+  MXN: 1,
+  USD: 0.058,
+  EUR: 0.053
+};
+
 // Simple Router
 const Router = {
   routes: {},
@@ -90,10 +97,11 @@ function showToast(message, type = 'success') {
 
 // Format currency
 function formatCurrency(amount) {
+  const converted = amount * (exchangeRates[currentCurrency] || 1);
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: currentCurrency
-  }).format(amount);
+  }).format(converted);
 }
 
 // Format date
