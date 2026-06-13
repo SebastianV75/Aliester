@@ -213,7 +213,7 @@
 
 .input:focus {
   border-color: var(--oc-black);
-  box-shadow: 0 0 0 2px rgba(33, 30, 30, 0.08);
+  box-shadow: 0 0 0 2px var(--focus-ring);
 }
 
 .input::placeholder {
@@ -337,7 +337,7 @@ select.input {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(33, 30, 30, 0.4);
+  background: var(--overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,3 +490,16 @@ select.input {
 .toast-success { border-left: 3px solid var(--success); }
 .toast-error { border-left: 3px solid var(--error); }
 .toast-warning { border-left: 3px solid var(--warning); }
+
+/* Dark Mode Overrides */
+[data-theme="dark"] select.input {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23a0a0a0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .btn-danger {
+  background: var(--error);
+}
+
+[data-theme="dark"] .btn-danger:hover {
+  background: #c44040;
+}

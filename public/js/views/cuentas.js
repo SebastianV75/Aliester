@@ -340,7 +340,7 @@ function saveCuenta() {
     'Inbursa': '#006B3F',
     'Hey Banco': '#FF6B00',
     'Klar': '#4ECDC4',
-    'Otro': '#656363'
+    'Otro': '#888888'
   };
 
   cuentasData.unshift({
@@ -350,7 +350,7 @@ function saveCuenta() {
     tipo,
     red,
     saldo,
-    color: bancoColors[banco] || '#656363'
+    color: bancoColors[banco] || '#888888'
   });
 
   closeModal();
