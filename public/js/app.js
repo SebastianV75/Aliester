@@ -201,6 +201,23 @@ function loadSidebarState() {
   }
 }
 
+// --- Mobile Sidebar Drawer ---
+function toggleMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
 // --- Drag & Drop Modules ---
 let draggedItem = null;
 
@@ -323,6 +340,13 @@ function loadPreferences() {
 // Init app — gated on auth
 document.addEventListener('DOMContentLoaded', () => {
   loadPreferences();
+
+  // Close mobile sidebar when a nav link is clicked
+  document.querySelector('.sidebar-nav')?.addEventListener('click', (e) => {
+    if (e.target.closest('.sidebar-item')) {
+      closeMobileSidebar();
+    }
+  });
 
   // Router is initialized only after auth resolves.
   setTimeout(() => {

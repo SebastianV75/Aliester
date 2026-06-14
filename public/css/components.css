@@ -523,3 +523,102 @@ select.input {
 [data-theme="dark"] .btn-danger:hover {
   background: #c44040;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE (≤768px)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Modal */
+  .modal {
+    max-width: calc(100vw - 16px);
+    max-height: 90vh;
+    margin: 8px;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header {
+    padding: var(--space-md);
+  }
+
+  .modal-body {
+    padding: var(--space-md);
+  }
+
+  .modal-footer {
+    padding: var(--space-sm) var(--space-md);
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  /* Toast */
+  .toast-container {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    left: var(--space-md);
+  }
+
+  .toast {
+    min-width: 0;
+    width: 100%;
+    font-size: var(--text-xs);
+  }
+
+  /* Buttons - larger touch targets */
+  .btn {
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+  }
+
+  .btn-sm {
+    min-height: 36px;
+    padding: 6px var(--space-sm);
+  }
+
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Inputs - larger touch targets */
+  .input,
+  .select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Tabs - scrollable */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    white-space: nowrap;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Badge */
+  .badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  /* Auth Card */
+  .auth-card {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  /* Dropdown */
+  .dropdown {
+    min-width: 160px;
+  }
+}

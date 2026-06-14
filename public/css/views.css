@@ -1638,3 +1638,181 @@ a.ast-context-row:hover { background: var(--bg-tertiary); }
 .finanzas-convert-banner strong {
   color: var(--text-primary);
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE (≤768px)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* App Launcher */
+  .app-launcher-grid {
+    gap: var(--space-sm);
+  }
+
+  .app-launcher-item {
+    min-width: 0;
+    flex: 0 0 calc(50% - var(--space-sm));
+    padding: var(--space-md);
+  }
+
+  .app-launcher-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Dashboard Summary */
+  .dashboard-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .summary-card {
+    padding: var(--space-md);
+  }
+
+  .summary-card-value {
+    font-size: var(--text-xl);
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  /* Kanban */
+  .kanban {
+    height: auto;
+    min-height: calc(100vh - 140px);
+  }
+
+  .kanban-column {
+    min-width: 260px;
+  }
+
+  /* List / Tables - horizontal scroll */
+  .list-view {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .list-table {
+    min-width: 500px;
+  }
+
+  /* Form */
+  .form-group {
+    grid-template-columns: 1fr;
+  }
+
+  .form-view {
+    max-width: 100%;
+  }
+
+  .form-card-body {
+    padding: var(--space-md);
+  }
+
+  /* Calendar */
+  .calendar-header {
+    padding: var(--space-sm) var(--space-md);
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .calendar-title {
+    font-size: var(--text-base);
+  }
+
+  .calendar-day {
+    min-height: 52px;
+    padding: 2px;
+  }
+
+  .calendar-day-number {
+    font-size: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-day.today .calendar-day-number {
+    width: 20px;
+    height: 20px;
+  }
+
+  .calendar-event {
+    font-size: 9px;
+    padding: 1px 2px;
+    display: none;
+  }
+
+  .calendar-day.today .calendar-event,
+  .calendar-day:hover .calendar-event {
+    display: block;
+  }
+
+  .calendar-day-header {
+    font-size: 10px;
+    padding: var(--space-xs);
+  }
+
+  /* Notes */
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .note-card {
+    min-height: auto;
+    padding: var(--space-md);
+  }
+
+  /* Cuentas */
+  .cuentas-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .cuenta-card {
+    padding: var(--space-md);
+  }
+
+  .cuenta-card-saldo {
+    font-size: var(--text-2xl);
+  }
+
+  /* Asistente */
+  .asistente {
+    max-width: 100%;
+  }
+
+  .ast-context-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  /* Suscripciones */
+  .suscripciones-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  /* Finanzas */
+  .finanzas-summary {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .finanzas-filters {
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+}
