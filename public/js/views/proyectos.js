@@ -10,6 +10,7 @@ let etapasData = [
 ];
 
 let kanbanFilter = 'todos';
+let kanbanProyecto = 'todos';
 let draggedTareaId = null;
 let mostrarTerminadasAntiguas = false;
 
@@ -23,7 +24,15 @@ function getTaskEtapaId(tarea) {
 }
 
 function renderProyectos() {
-  let allTareas = proyectosData.flatMap(p => p.tareas || []);
+  // Si el proyecto seleccionado ya no existe, vuelve a "todos"
+  if (kanbanProyecto !== 'todos' && !proyectosData.some(p => p.id === kanbanProyecto)) {
+    kanbanProyecto = 'todos';
+  }
+  const proyectosFuente = kanbanProyecto === 'todos'
+    ? proyectosData
+    : proyectosData.filter(p => p.id === kanbanProyecto);
+
+  let allTareas = proyectosFuente.flatMap(p => p.tareas || []);
   if (kanbanFilter !== 'todos') allTareas = allTareas.filter(t => t.prioridad === kanbanFilter);
 
   const sieteDias = 7 * 24 * 60 * 60 * 1000;
@@ -47,6 +56,12 @@ function renderProyectos() {
       <h2 class="control-panel-title">Proyectos y Tareas</h2>
       <div class="control-panel-spacer"></div>
       <div class="control-panel-filters">
+        ${proyectosData.length > 0 ? `
+          <select class="input" style="height:28px;font-size:var(--text-xs);padding:0 24px 0 8px" onchange="kanbanProyecto=this.value;renderProyectos()">
+            <option value="todos" ${kanbanProyecto === 'todos' ? 'selected' : ''}>Todos los proyectos</option>
+            ${proyectosData.map(p => `<option value="${p.id}" ${kanbanProyecto === p.id ? 'selected' : ''}>${p.nombre}</option>`).join('')}
+          </select>
+        ` : ''}
         <button class="filter-pill ${kanbanFilter === 'todos' ? 'active' : ''}" onclick="kanbanFilter='todos';renderProyectos()">Todos</button>
         <button class="filter-pill ${kanbanFilter === 'alta' ? 'active' : ''}" onclick="kanbanFilter='alta';renderProyectos()">Alta</button>
         <button class="filter-pill ${kanbanFilter === 'media' ? 'active' : ''}" onclick="kanbanFilter='media';renderProyectos()">Media</button>
@@ -58,6 +73,7 @@ function renderProyectos() {
             ${mostrarTerminadasAntiguas ? 'Ocultar' : 'Mostrar'} ${tareasTerminadasAntiguas.length} terminada${tareasTerminadasAntiguas.length > 1 ? 's' : ''} antigua${tareasTerminadasAntiguas.length > 1 ? 's' : ''}
           </button>
         ` : ''}
+        ${kanbanProyecto !== 'todos' ? `<button class="btn btn-secondary btn-sm" onclick="confirmDeleteProyecto('${kanbanProyecto}')">Eliminar proyecto</button>` : ''}
         <button class="btn btn-secondary btn-sm" onclick="openEtapasManager()">Administrar Etapas</button>
         <button class="btn btn-secondary btn-sm" onclick="openProyectoModal()">Nuevo Proyecto</button>
         <button class="btn btn-primary btn-sm" onclick="openTareaModal()" ${proyectosData.length === 0 ? 'disabled' : ''}>Nueva Tarea</button>
@@ -115,6 +131,34 @@ async function saveProyecto() {
   if (!nombre) return showToast('Ingresa un nombre', 'error');
   const result = await createProject({ nombre, descripcion, estado: 'activo' });
   if (result) { closeModal(); renderProyectos(); showToast('Proyecto creado'); }
+}
+
+function confirmDeleteProyecto(id) {
+  const p = proyectosData.find(pr => pr.id === id);
+  if (!p) return;
+  const count = (p.tareas || []).length;
+  const body = `
+    <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.5">
+      ¿Eliminar el proyecto <strong>${p.nombre}</strong>?
+      ${count > 0 ? `Se borraran tambien sus ${count} tarea${count > 1 ? 's' : ''}.` : ''}
+      Esta accion no se puede deshacer.
+    </p>
+  `;
+  const footer = `
+    <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-danger" onclick="deleteProyecto('${id}')">Eliminar</button>
+  `;
+  openModal('Eliminar Proyecto', body, footer);
+}
+
+async function deleteProyecto(id) {
+  const ok = await deleteProjectRemote(id);
+  if (ok) {
+    kanbanProyecto = 'todos';
+    closeModal();
+    renderProyectos();
+    showToast('Proyecto eliminado');
+  }
 }
 
 function openTareaModal() {

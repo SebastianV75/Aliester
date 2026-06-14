@@ -275,6 +275,18 @@ async function createProject(data) {
   return mapped;
 }
 
+async function deleteProjectRemote(id) {
+  const { error } = await db().from('projects').delete().eq('id', id);
+  if (error) { showToast('Error al eliminar proyecto', 'error'); return false; }
+  // Las tareas del proyecto se eliminan por ON DELETE CASCADE en la BD.
+  const proyecto = window.proyectosData.find(p => p.id === id);
+  const taskIds = proyecto ? (proyecto.tareas || []).map(t => t.id) : [];
+  // Las transacciones se conservan, pero pierden el vinculo a tareas borradas.
+  window.finanzasData.forEach(f => { if (f.tareaId && taskIds.includes(f.tareaId)) f.tareaId = null; });
+  window.proyectosData = window.proyectosData.filter(p => p.id !== id);
+  return true;
+}
+
 // ── Tasks CRUD ───────────────────────────────────────────────────────────
 async function createTask(data) {
   const row = {
