@@ -1246,3 +1246,85 @@ a.ast-context-row:hover { background: var(--bg-tertiary); }
   color: var(--text-tertiary);
   pointer-events: none;
 }
+
+/* ── Google Calendar Sync Bar ─────────────────────────────────────────── */
+
+.gcal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-md);
+  gap: var(--space-md);
+}
+
+.gcal-bar.gcal-connected {
+  background: color-mix(in srgb, var(--success) 8%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
+}
+
+.gcal-bar.gcal-disconnected {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.gcal-bar-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  min-width: 0;
+}
+
+.gcal-bar-info svg {
+  flex-shrink: 0;
+}
+
+.gcal-bar-email {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gcal-bar-last-sync {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.gcal-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.event-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--success);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-right: 2px;
+  vertical-align: middle;
+}

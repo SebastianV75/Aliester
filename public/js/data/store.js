@@ -115,6 +115,10 @@ function mapEvent(r) {
     fecha: r.fecha,
     hora: r.hora,
     color: r.color,
+    google_event_id: r.google_event_id || null,
+    google_etag: r.google_etag || null,
+    sync_status: r.sync_status || 'local',
+    external_source: r.external_source || null,
   };
 }
 

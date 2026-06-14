@@ -4,6 +4,135 @@
 
 let calendarioMonth = 5; // June (0-indexed)
 let calendarioYear = 2026;
+let _gcalStatus = null; // { connected, connection }
+let _gcalSyncing = false;
+
+async function fetchGcalStatus() {
+  try {
+    const { data, error } = await window.insforge.functions.invoke('google-calendar-sync', {
+      body: { action: 'status' },
+    });
+    if (!error && data) {
+      _gcalStatus = data;
+    }
+  } catch (err) {
+    console.error('Failed to fetch gcal status:', err);
+  }
+}
+
+async function connectGoogleCalendar() {
+  try {
+    // Tell the function where to redirect the browser after OAuth callback
+    const redirectUrl = window.location.origin + window.location.pathname + '#/calendario';
+    const { data, error } = await window.insforge.functions.invoke('google-calendar-sync', {
+      body: { action: 'oauth-init', redirect_url: redirectUrl },
+    });
+    if (error) {
+      showToast('Error al iniciar conexion con Google', 'error');
+      return;
+    }
+    if (data?.authUrl) {
+      // Use same-window navigation so the popup isn't blocked and the
+      // callback redirect lands back in the app
+      window.location.href = data.authUrl;
+    }
+  } catch (err) {
+    showToast('Error al conectar con Google Calendar', 'error');
+  }
+}
+
+async function disconnectGoogleCalendar() {
+  try {
+    const { data, error } = await window.insforge.functions.invoke('google-calendar-sync', {
+      body: { action: 'disconnect' },
+    });
+    if (!error && data?.disconnected) {
+      _gcalStatus = { connected: false, connection: null };
+      renderCalendario();
+      showToast('Google Calendar desconectado');
+    }
+  } catch (err) {
+    showToast('Error al desconectar', 'error');
+  }
+}
+
+async function syncGoogleCalendar() {
+  if (_gcalSyncing) return;
+  _gcalSyncing = true;
+  renderCalendario(); // re-render to show syncing state
+
+  try {
+    const { data, error } = await window.insforge.functions.invoke('google-calendar-sync', {
+      body: { action: 'sync' },
+    });
+    if (error) {
+      showToast(`Error de sincronizacion: ${error.message || 'desconocido'}`, 'error');
+    } else if (data) {
+      const msg = data.success
+        ? `Sync completa: ${data.pushed} enviados, ${data.pulled} recibidos, ${data.updated} actualizados`
+        : `Sync con errores: ${data.errors?.join(', ')}`;
+      showToast(msg, data.success ? 'success' : 'error');
+
+      // Reload events from DB
+      if (typeof loadAllData === 'function') {
+        await loadAllData();
+      }
+      await fetchGcalStatus();
+    }
+  } catch (err) {
+    showToast('Error de sincronizacion', 'error');
+  } finally {
+    _gcalSyncing = false;
+    renderCalendario();
+  }
+}
+
+function renderGcalBar() {
+  if (!_gcalStatus) return '';
+
+  if (_gcalStatus.connected) {
+    const conn = _gcalStatus.connection;
+    const email = conn?.google_email || 'Google Calendar';
+    const lastSync = conn?.last_sync_at
+      ? new Date(conn.last_sync_at).toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+      : 'Nunca';
+
+    return `
+      <div class="gcal-bar gcal-connected">
+        <div class="gcal-bar-info">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span class="gcal-bar-email">${email}</span>
+          <span class="gcal-bar-last-sync">Ultima sync: ${lastSync}</span>
+        </div>
+        <div class="gcal-bar-actions">
+          <button class="btn btn-primary btn-sm" onclick="syncGoogleCalendar()" ${_gcalSyncing ? 'disabled' : ''}>
+            ${_gcalSyncing
+              ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sincronizando...'
+              : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Sincronizar ahora'}
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="disconnectGoogleCalendar()" title="Desconectar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="gcal-bar gcal-disconnected">
+      <div class="gcal-bar-info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span class="gcal-bar-email">Google Calendar no conectado</span>
+      </div>
+      <div class="gcal-bar-actions">
+        <button class="btn btn-primary btn-sm" onclick="connectGoogleCalendar()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Conectar Google Calendar
+        </button>
+      </div>
+    </div>
+  `;
+}
 
 function renderCalendario() {
   const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -33,7 +162,10 @@ function renderCalendario() {
       <div class="calendar-day ${isToday ? 'today' : ''}" onclick="openEventoModal('${dateStr}')">
         <span class="calendar-day-number">${d}</span>
         ${dayEvents.map(e => `
-          <div class="calendar-event ${e.color}">${e.titulo}</div>
+          <div class="calendar-event ${e.color}" title="${e.sync_status === 'synced' ? 'Sincronizado con Google' : 'Solo local'}">
+            ${e.sync_status === 'synced' ? '<span class="event-sync-badge" title="Google Calendar">G</span>' : ''}
+            ${e.titulo}
+          </div>
         `).join('')}
       </div>
     `;
@@ -57,6 +189,8 @@ function renderCalendario() {
         </button>
       </div>
     </div>
+
+    ${renderGcalBar()}
 
     <div class="calendar">
       <div class="calendar-header">
@@ -211,4 +345,21 @@ async function deleteEvento(id) {
   }
 }
 
-Router.register('/calendario', renderCalendario);
+Router.register('/calendario', async () => {
+  // Check for OAuth return params
+  const urlParams = new URLSearchParams(window.location.search);
+  const gcalStatus = urlParams.get('gcal_status');
+  const gcalError = urlParams.get('gcal_error');
+
+  if (gcalStatus === 'connected') {
+    showToast('Google Calendar conectado exitosamente', 'success');
+    // Clean URL params
+    window.history.replaceState({}, '', window.location.pathname + '#/calendario');
+  } else if (gcalError) {
+    showToast(`Error de conexion con Google: ${gcalError}`, 'error');
+    window.history.replaceState({}, '', window.location.pathname + '#/calendario');
+  }
+
+  await fetchGcalStatus();
+  renderCalendario();
+});

@@ -351,7 +351,27 @@ window.addEventListener('auth-ready', async (e) => {
     Router.init();
     if (typeof aliInit === 'function') aliInit();
     initModuleDragDrop();
+
+    // Handle Google Calendar OAuth callback params
+    handleGcalCallback();
   } else {
     showAuthScreen();
   }
 });
+
+function handleGcalCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('gcal_status');
+  const error = params.get('gcal_error');
+
+  if (status === 'connected') {
+    showToast('Google Calendar conectado');
+    // Clean URL
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, '', cleanUrl);
+  } else if (error) {
+    showToast(`Error al conectar Google Calendar: ${error}`, 'error');
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, '', cleanUrl);
+  }
+}
