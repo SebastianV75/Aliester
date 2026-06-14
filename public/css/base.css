@@ -20,7 +20,7 @@ body {
   background: var(--bg-primary);
   line-height: 1.5;
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
 }
 
 a {

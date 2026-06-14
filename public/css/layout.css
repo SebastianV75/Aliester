@@ -3,7 +3,7 @@
 /* App Shell */
 .app {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -613,7 +613,7 @@
 
   /* Navbar */
   .navbar {
-    padding: 0 var(--space-md);
+    padding: env(safe-area-inset-top, 0px) var(--space-md) 0 var(--space-md);
     gap: var(--space-sm);
   }
 
@@ -628,7 +628,7 @@
 
   /* Content */
   .content {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom, 0px)) var(--space-md);
   }
 
   /* Control Panel */
