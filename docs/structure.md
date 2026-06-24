@@ -5,7 +5,7 @@ Aliester is a monorepo: one shared InsForge backend plus two frontends (desktop 
 ## Quick Map
 
 ```
-innovathon/
+aliester/
 ├── apps/
 │   ├── desktop/
 │   │   └── public/        ← Static web frontend (served as-is, Vercel root)
@@ -25,8 +25,7 @@ innovathon/
 │   └── google-calendar-sync.ts
 ├── migrations/            ← SQL migrations (applied via insforge CLI)
 ├── docs/                  ← You are here
-├── openspec/              ← Spec-driven change tracking (OpenSpec)
-├── vercel.json            ← Vercel deploy config (points to apps/desktop/public)
+├── vercel.json            ← Vercel URL behavior config
 ├── insforge.toml          ← InsForge project config
 ├── AGENTS.md              ← AI agent instructions (InsForge skills)
 ├── README.md              ← Product overview + stack + status
@@ -35,7 +34,7 @@ innovathon/
 
 ## Frontends
 
-- **`apps/desktop/public/`** — The production web app. Vanilla JS SPA with a hash-based router. Served by Vercel from this exact path (see `vercel.json`).
+- **`apps/desktop/public/`** — The production web app. Vanilla JS SPA with a hash-based router. Served by Vercel from this path. The project root/output directory is configured in Vercel, not in this repo. Validate that setting before production promotion; if it drifts, roll back to the last stable Vercel deploy and fix the root/output before redeploying.
 - **`apps/mobile/app/`** — The mobile app. Currently a minimal native shell that loads the desktop web app inside a WebView. Will evolve into a separate native codebase.
 
 ## Backend
@@ -48,12 +47,12 @@ The InsForge backend (`functions/`, `migrations/`, `insforge.toml`, `.insforge/`
 |------|----------|-----|
 | `functions/` | Stays at root | InsForge CLI deploys edge functions from this path by convention |
 | `migrations/` | Stays at root | Standard InsForge migration convention |
-| `apps/desktop/public/` | Served as-is by Vercel | Static site, no build step; `vercel.json` points here |
+| `apps/desktop/public/` | Served as-is by Vercel | Static site, no build step; Vercel project settings point here |
 | `apps/mobile/app/` | Separate native codebase | Keeps mobile platform-specific code out of the web app |
 | `apps/desktop/public/js/services/` | SDK client lives here | It wraps an external service (InsForge), not a vendored library |
 | `apps/desktop/public/js/data/` | Store stays here | It IS the data layer — the name matches the role |
 | `apps/desktop/public/js/views/` | Flat folder, one file per module | 9 files is manageable; sub-grouping adds complexity without payoff |
-| `vercel.json` at root | Vercel reads project root by default | Single config, no per-app config duplication |
+| `vercel.json` at root | Controls URL behavior only | The desktop root is configured in Vercel project settings |
 
 ## CSS Load Order
 
@@ -83,4 +82,4 @@ These are improvements worth considering later, but not urgent:
 - **Extract shared UI helpers** from `app.js` into `apps/desktop/public/js/utils/` (formatCurrency, formatDate, showToast, etc.) — would reduce app.js from 256 lines to ~100
 - **Add `apps/desktop/public/js/views/index.js`** as a barrel file if views grow beyond ~12 files
 - **Consider `apps/desktop/public/js/data/mappers.js`** if store.js grows past 400 lines (mappers are ~80 lines today)
-- **Update the mobile WebView URL** in `apps/mobile/app/_layout.tsx` to point to the production Vercel URL once the desktop app is redeployed
+- **Update the mobile WebView URL** in `apps/mobile/app/_layout.tsx` only if the production domain changes
