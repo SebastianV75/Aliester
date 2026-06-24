@@ -1,5 +1,5 @@
 [auth]
-allowed_redirect_urls = ["http://localhost:8080", "http://localhost:8080/", "https://main.d95f5sve6wacj.amplifyapp.com", "https://main.d95f5sve6wacj.amplifyapp.com/"]
+allowed_redirect_urls = ["http://localhost:8080", "http://localhost:8080/", "https://innovathon-2026-grupo-menudo.vercel.app/", "https://innovathon-2026-grupo-menudo.vercel.app/"]
 require_email_verification = true
 verify_email_method = "code"
 reset_password_method = "code"
