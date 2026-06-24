@@ -36,11 +36,21 @@ El asistente tiene dos modos: un **motor heurístico local** que funciona sin co
 
 ## Stack técnico
 
-Frontend vanilla JS (sin framework) con router por hash, servido como sitio estático. Backend en **InsForge**: Postgres con Row Level Security por usuario, autenticación con email/password, y edge functions en Deno para la integración con IA.
+El repo es un monorepo con un único backend compartido y dos frontends:
+
+- **`apps/desktop/`** — frontend web vanilla JS (sin framework) con router por hash, servido como sitio estático.
+- **`apps/mobile/`** — app móvil nativa (placeholder por ahora, carga el web actual vía WebView).
+- **Backend InsForge en la raíz** — Postgres con Row Level Security por usuario, autenticación con email/password, y edge functions en Deno para la integración con IA.
+
+### Levantar el desktop local
 
 ```
-cd public && python3 -m http.server 8080
+cd apps/desktop/public && python3 -m http.server 8080
 ```
+
+### Deploy
+
+Vercel sirve `apps/desktop/public` (configurado en `vercel.json`). El backend se deploya por separado con el CLI de InsForge desde la raíz.
 
 ## Estado actual
 

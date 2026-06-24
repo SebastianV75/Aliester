@@ -3,7 +3,7 @@ import { View, ActivityIndicator, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
-const WEB_APP_URL = 'https://main.d95f5sve6wacj.amplifyapp.com';
+const WEB_APP_URL = 'https://aliester.vercel.app';
 
 export default function RootLayout() {
   const [loading, setLoading] = useState(true);

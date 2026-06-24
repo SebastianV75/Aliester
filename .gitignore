@@ -43,6 +43,7 @@ yarn-error.log*
 
 # --- OpenCode (local tooling, not part of the project) ---
 .atl/
+.pi/
 
 # --- Misc ---
 *.bak
